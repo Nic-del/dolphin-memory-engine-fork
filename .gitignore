@@ -54,6 +54,13 @@ venv.bak/
 
 # Cython
 /_dolphin_memory_engine.cpp
+*.pyd
+*.so
+*.pyaudio
+*.lib
+*.exp
 
 # Project
-/python_src/dolphin_memory_engine/version.py
+/python_src/dolphin_memory_engine_fork/version.py
+/python_src/*.egg-info/
+/Source/*/build/
