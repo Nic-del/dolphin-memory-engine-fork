@@ -18,7 +18,7 @@ else:
 
 ext_modules = [
     setuptools_cmake_helper.CMakeExtension(
-        "dolphin_memory_engine._dolphin_memory_engine",
+        "dolphin_memory_engine_fork._dolphin_memory_engine",
         [
             os.fspath(file_dir.joinpath("_dolphin_memory_engine.pyx")),
         ],
