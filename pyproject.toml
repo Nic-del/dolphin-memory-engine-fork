@@ -4,11 +4,12 @@ requires = [
     "Cython>=0.29.21",
     "setuptools_scm[toml]>=6.4",
     "setuptools-cmake-helper>=0.1.1",
+    "cmake",
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dolphin-memory-engine"
+name = "dolphin-memory-engine-fork"
 description = "Hooks into the memory of a running Dolphin processes, allowing access to the game memory."
 authors = [{name = "Henrique Gemignani"}]
 classifiers = [
@@ -22,8 +23,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.9"
+version = "2.0.0"
 dependencies = []
-dynamic = ["version"]
+dynamic = []
 
 [project.readme]
 file = "README.md"
@@ -40,7 +42,7 @@ test = [
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
-write_to = "python_src/dolphin_memory_engine/version.py"
+write_to = "python_src/dolphin_memory_engine_fork/version.py"
 git_describe_command = "git describe --dirty --tags --long --match v[0-9]*"
 
 [tool.pytest.ini_options]
