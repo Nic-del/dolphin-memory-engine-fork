@@ -72,6 +72,58 @@ void DolphinAccessor::hook(const int pid)
   }
 }
 
+std::vector<int> DolphinAccessor::getProcessIDs(const std::string& custom_name)
+{
+  init();
+  return m_instance ? m_instance->getProcessIDs(custom_name) : std::vector<int>();
+}
+
+int DolphinAccessor::getProcessIDByGameID(const std::string& game_id, const std::string& custom_name)
+{
+  init();
+  if (!m_instance)
+    return -1;
+
+  std::vector<int> pids = m_instance->getProcessIDs(custom_name);
+  size_t length = game_id.length();
+  if (length == 0)
+    return -1;
+
+  for (int pid : pids)
+  {
+    IDolphinProcess* tempProcess = nullptr;
+#ifdef __linux__
+    tempProcess = new LinuxDolphinProcess();
+#elif _WIN32
+    tempProcess = new WindowsDolphinProcess();
+#elif __APPLE__
+    tempProcess = new MacDolphinProcess();
+#endif
+
+    if (tempProcess)
+    {
+      if (tempProcess->findPID(pid))
+      {
+        if (tempProcess->obtainEmuRAMInformations())
+        {
+          std::unique_ptr<char[]> gameIdBuffer(new char[length]);
+          if (tempProcess->readFromRAM(0, gameIdBuffer.get(), length, false))
+          {
+            std::string readGameId(gameIdBuffer.get(), length);
+            if (readGameId == game_id)
+            {
+              delete tempProcess;
+              return pid;
+            }
+          }
+        }
+      }
+      delete tempProcess;
+    }
+  }
+  return -1;
+}
+
 void DolphinAccessor::unHook()
 {
   delete m_instance;

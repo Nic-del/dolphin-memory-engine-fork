@@ -1,6 +1,9 @@
 // Wrapper around IDolphinProcess
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "../Common/CommonTypes.h"
 #include "../Common/MemoryCommon.h"
 #include "IDolphinProcess.h"
@@ -22,6 +25,8 @@ public:
   static void free();
   static void hook();
   static void hook(const int pid);
+  static std::vector<int> getProcessIDs(const std::string& custom_name = "");
+  static int getProcessIDByGameID(const std::string& game_id, const std::string& custom_name = "");
   static void unHook();
   static bool readFromRAM(const u32 offset, char* buffer, const size_t size, const bool withBSwap);
   static bool writeToRAM(const u32 offset, const char* buffer, const size_t size,

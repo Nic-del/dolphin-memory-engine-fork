@@ -101,6 +101,48 @@ bool LinuxDolphinProcess::obtainEmuRAMInformations()
   return false;
 }
 
+std::vector<int> LinuxDolphinProcess::getProcessIDs(const std::string& custom_name)
+{
+  std::vector<int> pids;
+  DIR* directoryPointer = opendir("/proc/");
+  if (directoryPointer == nullptr)
+    return pids;
+
+  struct dirent* directoryEntry = nullptr;
+  while ((directoryEntry = readdir(directoryPointer)))
+  {
+    std::istringstream conversionStream(directoryEntry->d_name);
+    int aPID = 0;
+    if (!(conversionStream >> aPID))
+      continue;
+    std::ifstream aCmdLineFile;
+    std::string line;
+    aCmdLineFile.open("/proc/" + std::string(directoryEntry->d_name) + "/comm");
+    getline(aCmdLineFile, line);
+
+    bool match = false;
+    if (!custom_name.empty())
+    {
+      match = (line == custom_name);
+    }
+    else
+    {
+      static const char* const s_dolphinProcessName{std::getenv("DME_DOLPHIN_PROCESS_NAME")};
+      match = s_dolphinProcessName ? line == s_dolphinProcessName :
+                                     (line == "dolphin-emu" || line == "dolphin-emu-qt2" ||
+                                      line == "dolphin-emu-wx");
+    }
+    if (match)
+    {
+      pids.push_back(aPID);
+    }
+
+    aCmdLineFile.close();
+  }
+  closedir(directoryPointer);
+  return pids;
+}
+
 bool LinuxDolphinProcess::findPID()
 {
   DIR* directoryPointer = opendir("/proc/");
