@@ -11,6 +11,12 @@ on:
     branches:
       - main
 
+env:
+  CIBW_ARCHS_LINUX: x86_64
+  CIBW_ARCHS_MACOS: arm64 x86_64
+  CIBW_ARCHS_WINDOWS: AMD64
+  CIBW_SKIP: pp* *musllinux*
+
 jobs:
   generate-wheels-matrix:
     name: Generate wheels matrix
@@ -36,11 +42,6 @@ jobs:
             } | jq -sc
           )
           echo "include=$MATRIX" >> $GITHUB_OUTPUT          
-    env:
-      CIBW_ARCHS_LINUX: x86_64
-      CIBW_ARCHS_MACOS: arm64 x86_64
-      CIBW_ARCHS_WINDOWS: AMD64
-      CIBW_SKIP: pp* *musllinux*
 
   build-sdist:
     name: sdist
@@ -95,6 +96,9 @@ jobs:
     needs:
       - build-sdist
       - build-wheels
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Download all the dists
