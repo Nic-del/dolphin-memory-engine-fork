@@ -107,7 +107,8 @@ int DolphinAccessor::getProcessIDByGameID(const std::string& game_id, const std:
         if (tempProcess->obtainEmuRAMInformations())
         {
           std::unique_ptr<char[]> gameIdBuffer(new char[length]);
-          if (tempProcess->readFromRAM(0, gameIdBuffer.get(), length, false))
+          u32 offset = Common::dolphinAddrToOffset(Common::MEM1_START, tempProcess->isARAMAccessible());
+          if (tempProcess->readFromRAM(offset, gameIdBuffer.get(), length, false))
           {
             std::string readGameId(gameIdBuffer.get(), length);
             if (readGameId == game_id)
